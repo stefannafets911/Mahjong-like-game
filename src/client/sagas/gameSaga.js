@@ -3,16 +3,27 @@ import * as actions from '../actions';
 import * as selectors from '../selectors';
 import React from "react";
 
+let timerFlag;
 export default function* watchUsersSaga() {
-    yield takeEvery(actions.getGameNumbsArray().type, getGeneratedArray);
     yield takeEvery(actions.getChosenCard().type, getChosenCardToStore);
+    yield takeEvery(actions.getGameNumbsArray().type, getGeneratedArray);
     yield takeEvery(actions.setOpenedCards().type, setOpenedCardsToStore);
+    yield takeEvery(actions.getGuessedCards().type, getGuessedCardsToStore);
     yield takeEvery(actions.setTemporaryCardsOpen().type, setTemporaryCardsOpenToStore);
 }
 
 function randomInteger(min, max) {
     let rand = min + Math.random() * (max + 1 - min);
     return Math.floor(rand);
+}
+
+function isPrime(num) {
+    for (let i = 2; i < num; i++) {
+        if (num % i === 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time));
@@ -22,8 +33,7 @@ function* getGeneratedArray() {
     let Obj = {};
     for (let i = 1; i < 16; i++) {
         let randomNumb = randomInteger(1, 50);
-
-        if (array.indexOf(randomNumb) === -1) {
+        if (array.indexOf(randomNumb) === -1 && isPrime(randomNumb)) {
             array.push(randomNumb, randomNumb);
         } else {
             i--;
@@ -40,8 +50,13 @@ function* getGeneratedArray() {
                 id: {
                     value: i
                 },
-                isVisible: {
+                isBlocked: {
                     value: true,
+                    writable: true,
+                    configurable: true
+                },
+                Guessed: {
+                    value: false,
                     writable: true,
                     configurable: true
                 }
@@ -52,7 +67,7 @@ function* getGeneratedArray() {
     yield call(delay, 3000);
 
     for (let key in Obj) {
-        Obj[key]['isVisible'] = false;
+        Obj[key]['isBlocked'] = false;
     }
 
     yield put(actions.setGameNumbsArray(Obj))
@@ -66,7 +81,17 @@ function* setOpenedCardsToStore(action) {
     const obj = yield select(selectors.getArrayListState);
 
     for (let i = 0; i < action.payload.length; i++) {
-        obj[action.payload[i]]['isVisible'] = true;
+        obj[action.payload[i]]['isBlocked'] = true;
+    }
+
+    yield put(actions.getOpenedCards(obj));
+}
+
+function* getGuessedCardsToStore(action) {
+    const obj = yield select(selectors.getArrayListState);
+
+    for (let i = 0; i < action.payload.length; i++) {
+        obj[action.payload[i]]['Guessed'] = true;
     }
 
     yield put(actions.getOpenedCards(obj));
@@ -76,16 +101,21 @@ function* setTemporaryCardsOpenToStore(action) {
     const obj = yield select(selectors.getArrayListState);
 
     for (let i = 0; i < action.payload.length; i++) {
-        obj[action.payload[i]]['isVisible'] = true;
+        obj[action.payload[i]]['isBlocked'] = true;
     }
 
     yield put(actions.getOpenedCards(obj));
-    yield call(delay, 1000);
 
-    for (let i = 0; i < action.payload.length; i++) {
-        obj[action.payload[i]]['isVisible'] = false;
+    if (!timerFlag) {
+        timerFlag = true;
+        yield call(delay, 1300);
+        timerFlag = false;
+
+        for (let key in obj) {
+            obj[key]['isBlocked'] = false;
+        }
+
+        yield put(actions.getOpenedCards(obj));
+        yield put(actions.setChosenCard(''));
     }
-
-    yield put(actions.getOpenedCards(obj));
-    yield put(actions.setChosenCard(''))
 }

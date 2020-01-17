@@ -9,9 +9,10 @@ export const mapStateToProps = state => ({
 });
 
 export const mapDispatchToProps = dispatch => ({
-    getGameNumbsArrayFunc: payload => dispatch(actions.getGameNumbsArray(payload)),
     getChosenCardFunc: payload => dispatch(actions.getChosenCard(payload)),
     setOpenedCardsFunc: payload => dispatch(actions.setOpenedCards(payload)),
+    getGuessedCardsFunc: payload => dispatch(actions.getGuessedCards(payload)),
+    getGameNumbsArrayFunc: payload => dispatch(actions.getGameNumbsArray(payload)),
     setTemporaryCardsOpenFunc: payload => dispatch(actions.setTemporaryCardsOpen(payload)),
 });
 

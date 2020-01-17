@@ -11,9 +11,10 @@ import {
 
 export class Main extends PureComponent {
     static propTypes = {
-        getGameNumbsArrayFunc: PropTypes.func.isRequired,
         getChosenCardFunc: PropTypes.func.isRequired,
         setOpenedCardsFunc: PropTypes.func.isRequired,
+        getGuessedCardsFunc: PropTypes.func.isRequired,
+        getGameNumbsArrayFunc: PropTypes.func.isRequired,
         setTemporaryCardsOpenFunc: PropTypes.func.isRequired,
     };
 
@@ -26,6 +27,7 @@ export class Main extends PureComponent {
             getArray,
             getChosenCardFunc,
             setOpenedCardsFunc,
+            getGuessedCardsFunc,
             getChosenCardFromState,
             setTemporaryCardsOpenFunc
         } = this.props;
@@ -42,10 +44,12 @@ export class Main extends PureComponent {
                                     key={key}
                                     id={getArray[item]['id']}
                                     cardValue={getArray[item]['value']}
+                                    Guessed = {getArray[item]['Guessed']}
                                     getChosenCardFunc = {getChosenCardFunc}
+                                    isBlocked = {getArray[item]['isBlocked']}
                                     setOpenedCardsFunc = {setOpenedCardsFunc}
+                                    getGuessedCardsFunc = {getGuessedCardsFunc}
                                     getChosenCardFromState = {getChosenCardFromState}
-                                    isVisible = {getArray[item]['isVisible']}
                                     setTemporaryCardsOpenFunc = {setTemporaryCardsOpenFunc}
                                 />
                             )

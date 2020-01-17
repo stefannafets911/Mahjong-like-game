@@ -2,7 +2,7 @@ import * as constants from '../../constants';
 
 const initialState = {
     ArrayList: {},
-    ChosenCard: {},
+    GuessedList: {},
 };
 
 export default function (state = initialState, action) {

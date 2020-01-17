@@ -8,10 +8,12 @@ import {
 export const CardItem = (props) => {
     const {
         id,
+        Guessed,
+        isBlocked,
         cardValue,
-        isVisible,
         getChosenCardFunc,
         setOpenedCardsFunc,
+        getGuessedCardsFunc,
         getChosenCardFromState,
         setTemporaryCardsOpenFunc
     } = props;
@@ -38,7 +40,7 @@ export const CardItem = (props) => {
 
             if (getChosenCardFromState.card_value === cardValue && getChosenCardFromState.card_id !== id) {
                 selectedCarts = [id, getChosenCardFromState.card_id];
-                setOpenedCardsFunc(selectedCarts);
+                getGuessedCardsFunc(selectedCarts);
                 getChosenCardFunc('');
             } else {
                 selectedCarts = [id, getChosenCardFromState.card_id];
@@ -50,11 +52,13 @@ export const CardItem = (props) => {
 
     return (
         <CardBlock
-            isVisible={isVisible}
+            Guessed={Guessed}
+            isBlocked = {isBlocked}
             onClick={getCheckedCard}
         >
             <Title
-                isVisible={isVisible}
+                Guessed={Guessed}
+                isBlocked = {isBlocked}
             >
                 {cardValue}
             </Title>
@@ -64,9 +68,11 @@ export const CardItem = (props) => {
 
 CardItem.propTypes = {
     id: PropTypes.number.isRequired,
+    Guessed: PropTypes.bool.isRequired,
+    isBlocked: PropTypes.bool.isRequired,
     cardValue: PropTypes.number.isRequired,
-    isVisible: PropTypes.bool.isRequired,
     getChosenCardFunc: PropTypes.func.isRequired,
     setOpenedCardsFunc: PropTypes.func.isRequired,
+    getGuessedCardsFunc: PropTypes.func.isRequired,
     setTemporaryCardsOpenFunc: PropTypes.func.isRequired,
 };
